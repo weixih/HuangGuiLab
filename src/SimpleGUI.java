@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Font;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -17,7 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
+public class SimpleGUI extends JFrame implements ActionListener, ItemListener, ChangeListener {
 
     private JCheckBox checkBox1;
     private JCheckBox checkBox2;
@@ -79,6 +81,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         textField = new JTextField(10); // accepts upto 10 characters
         JButton sendButton = new JButton("Send");
         JButton resetButton = new JButton("Reset");
+        JButton openButton = new JButton("Open");
 
         // create checkboxes
         checkBox1 = new JCheckBox("Yes");
@@ -94,6 +97,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         panel.add(textField);
         panel.add(sendButton);
         panel.add(resetButton);
+        panel.add(openButton);
         panel.add(checkBox1);
         panel.add(checkBox2);
 
@@ -115,6 +119,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         //setting up buttons to use ActionListener interface and actionPerformed method
         sendButton.addActionListener(this);
         resetButton.addActionListener(this);
+        openButton.addActionListener(this);
         menuItem1.addActionListener(this);
         menuItem2.addActionListener(this);
         menuItem3.addActionListener(this);
@@ -124,7 +129,7 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         checkBox1.addItemListener(this);
         checkBox2.addItemListener(this);
 
-
+        slider.addChangeListener(this);
 
         // display the frame!
         setVisible(true);
@@ -147,12 +152,39 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
                 textField.setText("");
                 checkBox1.setSelected(false);
                 checkBox2.setSelected(false);
+            }else if(text.equals("Open")){
+                JFrame opened = new JFrame("Open");
+                opened.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                opened.setSize(250, 200);
+                opened.setLocation(150, 25);
+                JLabel label = new JLabel("HELLO!");
+                JPanel panel = new JPanel();
+                panel.add(label);
+                opened.add(panel, BorderLayout.NORTH);
+                opened.setVisible(true);
             }
         }
         if(source instanceof JMenuItem){
             JMenuItem menuItem = (JMenuItem) source;
             String text = menuItem.getText();
-            
+
+            if(text.equals("FAQ")){
+                JFrame faq = new JFrame("FAQ");
+                faq.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                faq.setSize(250, 200);
+                faq.setLocation(150, 25);
+                JLabel title = new JLabel("FAQs");
+                JTextArea questions = new JTextArea("1. Q: How are you?\n    A:Good\n2. Q: How is the weather?\n    A: Good\n3. Q: Good\n    A: Good");
+                JPanel panel1 = new JPanel();
+                panel1.add(title);
+                JPanel panel2 = new JPanel();
+                panel2.add(questions);
+                faq.add(panel1, BorderLayout.NORTH);
+                faq.add(panel2, BorderLayout.CENTER);
+                faq.setVisible(true);
+            }else{
+                textField.setText(text);
+            }
         }
 
 
@@ -179,4 +211,12 @@ public class SimpleGUI extends JFrame implements ActionListener, ItemListener {
         // can still be helpful for testing and debugging!
         System.out.println("Current state: yes = " + checkBox1.isSelected() + ", no = " + checkBox2.isSelected());
     }
+
+    public void stateChanged(ChangeEvent e){
+        Object source = e.getSource();
+        JSlider slider = (JSlider) source;
+        int value = slider.getValue();
+        textArea.setText("" + value);
+    }
+
 }
